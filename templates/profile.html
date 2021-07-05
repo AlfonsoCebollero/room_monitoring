@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+    {{ username }}
+{% endblock %}
+
+{% block body %}
+{% if rooms != None %}
+<h3 align="center">Monitored Rooms</h3>
+<table class="table table-dark w-auto table-bordered" align="center">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+        <th scope="col">Details</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for room in rooms %}
+    <tr>
+      <td>{{  room['name'] }}</td>
+      <td>{{ room }}</td>
+    {% endfor %}
+    </tr>
+  </tbody>
+</table>
+
+    {% endif %}
+<h3 align="center">Add new room to monitor</h3>
+    {% if alert %}
+    <div class="alert alert-danger" role="alert">
+        The room already exists!
+    </div>
+    {% endif %}
+<form method="post" action="{{ url_for('create_room') }}">
+<div class="container">
+    <table id="myTable" class=" table order-list">
+    <thead>
+        <tr>
+            <td>Room Name</td>
+            <td>Parameter</td>
+            <td>Type</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-sm-4">
+                <input type="text" name="name" class="form-control" required/>
+            </td>
+            <td class="col-sm-4">
+                <fieldset disabled>
+                <input type="text" name="parameter" class="form-control">
+                </fieldset>
+            </td>
+            <td class="col-sm-4">
+                <fieldset disabled>
+                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="selection">
+                <option selected>Choose...</option>
+                <option value="1">String</option>
+                <option value="2">Integer</option>
+                </select>
+                </fieldset>
+            </td>
+            <td class="col-sm-2"><a class="deleteRow"></a>
+
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" style="text-align: left;">
+                <span align="center">
+                    <input type="button" class="btn btn-dark" id="addrow" value="Add Row" />
+                    <button type="submit" class="btn btn-light" align="center">Submit</button>
+                </span>
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </tfoot>
+</table>
+</div>
+</form>
+
+    <form action="{{ url_for('log_out') }}" method="post" class="needs-validation">
+        <button type="submit" class="btn btn-outline-dark">
+            <strong>Log out</strong>
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M11.646 11.354a.5.5 0 0 1 0-.708L14.293 8l-2.647-2.646a.5.5 0 0 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"></path>
+                <path fill-rule="evenodd" d="M4.5 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"></path>
+                <path fill-rule="evenodd" d="M2 13.5A1.5 1.5 0 0 1 .5 12V4A1.5 1.5 0 0 1 2 2.5h7A1.5 1.5 0 0 1 10.5 4v1.5a.5.5 0 0 1-1 0V4a.5.5 0 0 0-.5-.5H2a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-1.5a.5.5 0 0 1 1 0V12A1.5 1.5 0 0 1 9 13.5H2z"></path>
+            </svg>
+        </button>
+    </form>
+
+    <script>
+    $(document).ready(function () {
+    var counter = 0;
+
+    $("#addrow").on("click", function () {
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td><fieldset disabled><input type="text" id="disabledTextInput" placeholder="Name already defined" class="form-control" name="name' + counter + '" required/></fieldset></td>';
+        cols += '<td><input type="text" class="form-control" name="parameter' + counter + '" required/></td>';
+        cols += '<td class="col-sm-4"> \
+                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect' + counter +'" name="selection' + counter + '" required> \
+                <option selected>Choose...</option> \
+                <option value="1">String</option> \
+                <option value="2">Integer</option> \
+            </select> \
+            </td>';
+
+        cols += '<td><input type="button" class="ibtnDel btn btn-md btn-danger "  value="Delete"></td>';
+        newRow.append(cols);
+        $("table.order-list").append(newRow);
+        counter++;
+    });
+
+
+
+    $("table.order-list").on("click", ".ibtnDel", function (event) {
+        $(this).closest("tr").remove();
+        counter -= 1
+    });
+
+
+});
+
+    function calculateRow(row) {
+        var price = +row.find('input[name^="price"]').val();
+
+    }
+
+    function calculateGrandTotal() {
+            var grandTotal = 0;
+            $("table.order-list").find('input[name^="price"]').each(function () {
+            grandTotal += +$(this).val();
+        });
+        $("#grandtotal").text(grandTotal.toFixed(2));
+        }
+
+        (function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+         }
+        form.classList.add('was-validated');
+         }, false);
+      });
+     }, false);
+    })();
+    </script>
+{% endblock %}
